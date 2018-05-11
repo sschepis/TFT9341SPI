@@ -411,6 +411,31 @@ void TFT9341::setXY(int x1, int y1, int x2, int y2) {
 	wr_comm_last(PASET);
 	spi_write(y, sizeof(y));
 }
+/* //this function variant actually proved to work better
+void TFT9341::setXY(int x0, int y0, int x1,int y1) {
+int _xstart=0;
+int _ystart=0;
+  int x_start = x0 + _xstart;
+int  x_end = x1 + _xstart;
+  int y_start = y0 + _ystart;
+  int y_end = y1 + _ystart;
+  
+
+  wr_comm_last(ST77XX_CASET); // Column addr set
+  write8_cont(x_start >> 8);
+  write8_cont(x_start & 0xFF);     // XSTART 
+  write8_cont(x_end >> 8);
+  write8_cont(x_end & 0xFF);     // XEND
+
+  wr_comm_last(ST77XX_RASET); // Row addr set
+  write8_cont(y_start >> 8);
+  write8_cont(y_start & 0xFF);     // YSTART
+  write8_cont(y_end >> 8);
+  write8_cont(y_end & 0xFF);     // YEND
+
+  wr_comm_last(ST77XX_RAMWR); // write to RAM
+}
+*/
 
 void TFT9341::clrScr() {
 	const uint32_t lines = (uint32_t)76800 / (uint32_t)SCANLINES;

@@ -1,4 +1,4 @@
-  ILI9341 TFT SPI library
+  ILI9341 TFT SPI library, modified to work with ST7789V 240x240 screens. Warning: still containing seriuos bugs!!
   
   based on UTFT.cpp - Arduino/chipKit library support for Color TFT LCD Boards
   Original library you can find at http://electronics.henningkarlsen.com/  

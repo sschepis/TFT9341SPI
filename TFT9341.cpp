@@ -232,7 +232,38 @@ static const uint8_t PROGMEM init_cmd[] = {
 	0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F, // Set Gamma
 	0
 };
- 
+//***********************************************added for ST7789******************************************
+static const uint8_t PROGMEM st7789_init_cmd[] = {
+	
+	2, ST77XX_COLMOD, 0x55, /* Interface Pixel Format, 16bits/pixel for RGB/MCU interface */
+	2, ST_CMD_DELAY,  10,    
+	//6, 0xB2, 0x0c, 0x0c, 0x00, 0x33, 0x33,     /* Porch Setting */
+	//2, 0xB7, 0x45,     /* Gate Control, Vgh=13.65V, Vgl=-10.43V */
+	//2, 0xBB, 0x2B,     /* VCOM Setting, VCOM=1.175V */
+	//2, 0xC0, 0x2C,     /* LCM Control, XOR: BGR, MX, MH */
+	//3, 0xC2, 0x01, 0xFF,     /* VDV and VRH Command Enable, enable=1 */
+	//2, 0xC3, 0x11,     /* VRH Set, Vap=4.4+... */
+	//2, 0xC4, 0x20,     /* VDV Set, VDV=0 */
+	//3, 0xC6, 0x0F,      /* Frame Rate Control, 60Hz, inversion=0 */
+	//2, 0xD0, 0xA4, 0xA1,     /* Power Control 1, AVDD=6.8V, AVCL=-4.8V, VDDS=2.3V */
+	//15, 0xE0, 0xD0, 0x00, 0x05, 0x0E, 0x15, 0x0D, 0x37, 0x43, 0x47, 0x09, 0x15, 0x12, 0x16, 0x19,     /* Positive Voltage Gamma Control */
+	//15, 0xE1, 0xD0, 0x00, 0x05, 0x0D, 0x0C, 0x06, 0x2D, 0x44, 0x40, 0x0E, 0x1C, 0x18, 0x16, 0x19,     /* Negative Voltage Gamma Control */
+	2, ST77XX_MADCTL, 0x08,//(1<<5)|(1<<6),     /* Memory Data Access Control, MX=MV=1, MY=ML=MH=0, RGB=0 */
+	5, ST77XX_CASET  , 0x00, ST7789_240x240_XSTART,(240+ST7789_240x240_XSTART) >> 8, (240+ST7789_240x240_XSTART) & 0xFF,  // 15: Column addr set, 4 args, no delay:
+                   //     XSTART = 0
+                //      XEND = 240
+    5, ST77XX_RASET , 0x00,ST7789_240x240_YSTART,(240+ST7789_240x240_YSTART) >> 8, (240+ST7789_240x240_YSTART) & 0xFF,   // 16: Row addr set, 4 args, no delay:
+                   //     YSTART = 0
+                  //      YEND = 240
+    1, ST77XX_INVON ,
+	2,  ST_CMD_DELAY,10,
+	1, ST77XX_NORON  ,
+	2,  ST_CMD_DELAY,10,
+	//0x80,0x11,0,     /* Sleep Out */
+	//0x80, 0x29, 0,     /* Display On */
+	//0xFF, 0, 0
+	0
+}; 
  
 /*
  * DC for command, writes 1 byte
@@ -304,7 +335,8 @@ void TFT9341::InitLCD(uint8_t orientation) {
     delay(200);
     
     //init commands & values
-    const uint8_t *adr = init_cmd;
+   // const uint8_t *adr = init_cmd;
+	const uint8_t *adr = st7789_init_cmd;
 	TFT_CS_LOW;
 	while (1) {
 		uint8_t count = *(adr++);		
@@ -332,7 +364,8 @@ void TFT9341::setRotation(uint8_t m) {
     rotation = m % 4; // can't be higher than 3
     switch (rotation) {
         case 0:
-            o = MADCTL_MX | MADCTL_BGR;
+            //o = MADCTL_MX | MADCTL_BGR;
+		 o = MADCTL_RGB;
             orient=PORTRAIT;
             disp_x_size=239;
 		    disp_y_size=319;            
